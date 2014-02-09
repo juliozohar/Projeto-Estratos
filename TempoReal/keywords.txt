@@ -1,0 +1,7 @@
+TempoReal	KEYWORD1 
+inicia		KEYWORD2
+para		KEYWORD2
+acertaDataHora	KEYWORD2
+displayDataHora KEYWORD2
+getTimestamp 	KEYWORD2
+
