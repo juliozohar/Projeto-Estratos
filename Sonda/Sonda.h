@@ -11,14 +11,15 @@
  *  (C) 2014 Licensed under CERN OHL v.1.2
  *===============================================================
  */
- #ifndef __CONTROLE_H__ 
- #define __CONTROLE_H__ 
- #include <stdio.h> 
+#ifndef __CONTROLE_H__ 
+#define __CONTROLE_H__ 
+#include <stdio.h> 
  
- #define ONE_WIRE_BUS 3 
- 
- #define DHT_TYPE DHT11 
- #define FATOR_MULT 0.09765625
+#define ONE_WIRE_BUS 3 
+#define BMP085_ADDRESS 0x77  // I2C address do BMP085
+
+#define DHT_TYPE DHT11 
+#define FATOR_MULT 0.09765625
  
  // Mensagens de Erro 
 #define ERR            "Erro: " 
@@ -39,28 +40,40 @@
 #define MSG_SD_INIT    "Inicializando SDCard..."
 #define MSG_PGM_INIT   "Inicializando em 5 segundos....."
 
-// Variaveis do DHT11 
-#define DHT_TYPE DHT11 
-#define FATOR_MULT 0.09765625
+// Variaveis utilizadas pelos marinheiros. 
+float PRESSAO_MAR = 1013.25; // Pressao ao nivel do mar, equivalente a 1013.25 hPa
+float K_COEF_PRESSAO = 44330;
 
+const unsigned char OSS = 0;  // Oversampling Setting
 
-  // Variaveis utilizadas pelos marinheiros. 
-  float PRESSAO_MAR = 1013.25; // Pressao ao nivel do mar, equivalente a 1013.25 hPa
-  float K_COEF_PRESSAO = 44330;
+//Valores de calibracao do sensor BMP085. 
+int ac1;
+int ac2; 
+int ac3; 
+unsigned int ac4;
+unsigned int ac5;
+unsigned int ac6;
+int b1; 
+int b2;
+int mb;
+int mc;
+int md;
+long b5; 
 
-  // Assinatura de metodos a implementar. 
-  float get_temp_ds(); 
+// Assinatura de metodos a implementar. 
+float get_temp_ds(); 
 
-  float get_temp_dht(); 
+float get_temp_dht(); 
 
-  float get_umidade(); 
+float get_umidade(); 
 
-  float get_pressao(); 
+float get_pressao(); 
 
-  float get_altitude(); 
+float get_altitude(); 
 
-  float calcula_altitude(); 
+float calcula_altitude(); 
 
+void bmp085Calibration(); 
 
 #endif
 
