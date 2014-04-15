@@ -9,20 +9,20 @@
  *  (C) 2014 Licensed under CERN OHL v.1.2
  *===============================================================
  */
- #include "TempoReal.h"
- 
- #ifndef __DS1307_h__
+#include "TempoReal.h"
+#ifndef __DS1307_h__
    #include <Wire.h>  
    #include <DS1307.h> 
- #endif 
- 
+#endif
+
+int dia, mes, ano; 
+int hora, minuto, segundo;
+
+//TIMESTAMP ts; 
  /*
-  * Construtor da classe. Recebe o pino ao qual esta conectada a linha de 
-  * dados do relogio de tempo real. 
+  * Construtor da classe. 
   */
- TempoReal::TempoReal(int pino){
-   int header = pino;
- }
+ TempoReal::TempoReal(){}
 
 /*
  * Inicializa a execucao do relogio de tempo real. 
@@ -57,15 +57,6 @@ void TempoReal::acertaDataHora(int ano, int mes, int dia,
 }
 
 /*
- * Exibe o timestamp atual do RTC. Caso ele ainda nao tenha sido acertado, 
- * retorna uma string default, da data mais antiga suportada pelo chip. 
- */ 
-void TempoReal::displayDataHora(){
-  char *timestamp = getTimestamp(); 
-  Serial.println(timestamp); 
-} 
-
-/*
  * Recupera o timestamp atual e o devolve formatado, no seguinte gabarito: 
  * 'yyyy-mm-dd-hh.mm.ss'. Este formato e compativel com o tipo de dados 
  * TIMESTAMP do DB2, podendo ser movido diretamente para registro em banco de 
@@ -75,15 +66,28 @@ void TempoReal::displayDataHora(){
  * porariamente a inconsistencia, adiciono +14 a variavel de ano. Procurar 
  * solucao na documentacao do DS1307 para resolver este problema. 
  */ 
-char* TempoReal::getTimestamp(){
-  char ret; 
-  
-  ret += (RTC.get(DS1307_YR, false)+14); 
-  ret += RTC.get(DS1307_MTH, false); 
-  ret += RTC.get(DS1307_DATE, false); 
-  ret += RTC.get(DS1307_HR, false); 
-  ret += RTC.get(DS1307_MIN, false); 
-  ret += RTC.get(DS1307_SEC, false); 
-  
-  return &ret; 
+void TempoReal::leRTC(){
+  hora    = RTC.get(DS1307_HR, true); 
+  minuto  = RTC.get(DS1307_MIN, false);
+  segundo = RTC.get(DS1307_SEC, false);
+  dia     = RTC.get(DS1307_DATE, false);
+  mes     = RTC.get(DS1307_MTH, false);
+  ano     = RTC.get(DS1307_YR, false);
+  ano    += 14;
 }
+
+void TempoReal::getTimestamp(){
+  leRTC();
+  sprintf(ts, "%4d-%02d-%02d-%02d.%02d.%02d", ano, mes, dia, hora, minuto, segundo);   
+}
+
+/*
+ * Exibe o timestamp atual do RTC. Caso ele ainda nao tenha sido acertado, 
+ * retorna uma string default, da data mais antiga suportada pelo chip. 
+ */ 
+void TempoReal::displayDataHora(){
+  Serial.print("Timestamp lido: "); 
+  Serial.println(ts); 
+} 
+
+
